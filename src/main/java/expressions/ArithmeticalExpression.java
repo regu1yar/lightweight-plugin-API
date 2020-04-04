@@ -1,7 +1,5 @@
 package expressions;
 
-import utils.Representable;
-
 public class ArithmeticalExpression implements Expression {
     private final String representation;
 

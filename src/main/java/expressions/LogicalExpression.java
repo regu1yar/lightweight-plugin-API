@@ -1,7 +1,5 @@
 package expressions;
 
-import utils.Representable;
-
 public class LogicalExpression implements Expression {
     private final String representation;
 
