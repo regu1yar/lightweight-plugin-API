@@ -10,6 +10,10 @@ import java.util.List;
 public class CallChain implements Representable {
     private final ArrayList<Call> calls;
 
+    public CallChain() {
+        calls = new ArrayList<>();
+    }
+
     public CallChain(ArrayList<Call> calls) {
         this.calls = calls;
     }
