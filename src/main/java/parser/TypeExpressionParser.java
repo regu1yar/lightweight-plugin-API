@@ -22,7 +22,7 @@ public class TypeExpressionParser implements ExpressionParser {
             "|", new OrOperation()
     );
 
-    private static final String NUMBER_REGEXP = "\\s*(\\d+)\\s*";
+    private static final String NUMBER_REGEXP = "\\s*-?\\s*(\\d+)\\s*";
     private static final String ELEMENT_REGEXP = "\\s*(element)\\s*";
     private static final String OPERAND_REGEXP = "\\(.+?\\)|\\w+";
     private static final String OPERATION_REGEXP = "[+\\-*><=&|]";

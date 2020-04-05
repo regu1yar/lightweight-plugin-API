@@ -111,4 +111,14 @@ public class TypeExpressionParserTest {
         assertTrue(expression instanceof LogicalExpression);
         assertEquals(representation, expression.getRepresentation());
     }
+
+    @Test
+    public void parseNegativeNumber() throws TypeError, SyntaxError {
+        String representation = "-10";
+
+        Expression expression = expressionParser.parse(representation);
+
+        assertTrue(expression instanceof ArithmeticalExpression);
+        assertEquals(representation, expression.getRepresentation());
+    }
 }
