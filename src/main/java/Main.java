@@ -8,13 +8,16 @@ import exceptions.SyntaxError;
 import exceptions.TypeError;
 import parser.CallChainParser;
 import parser.CallChainParserImpl;
+import parser.ExpressionParser;
+import parser.TypeExpressionParser;
 
 import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
         try {
-            CallChainParser parser = new CallChainParserImpl();
+            ExpressionParser expressionParser = new TypeExpressionParser();
+            CallChainParser parser = new CallChainParserImpl(expressionParser);
             Scanner scan = new Scanner(System.in);
             CallChain callChain = parser.parse(scan.nextLine());
 
