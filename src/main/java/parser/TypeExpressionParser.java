@@ -22,16 +22,16 @@ public class TypeExpressionParser implements ExpressionParser {
             "|", new OrOperation()
     );
 
-    private static final String NUMBER_REGEXP = "\\s*-?\\s*(\\d+)\\s*";
-    private static final String ELEMENT_REGEXP = "\\s*(element)\\s*";
-    private static final String OPERAND_REGEXP = "\\(.+?\\)|\\w+";
+    private static final String NUMBER_REGEXP = "-?\\s*\\d+";
+    private static final String ELEMENT_REGEXP = "element";
+    private static final String OPERAND_REGEXP = "\\(.+?\\)" + "|" + NUMBER_REGEXP + "|" + ELEMENT_REGEXP;
     private static final String OPERATION_REGEXP = "[+\\-*><=&|]";
-    private static final String BINARY_OPERATION_REGEXP = "\\s*\\(\\s*(" + OPERAND_REGEXP + ")" +
+    private static final String BINARY_OPERATION_REGEXP = "\\(\\s*(" + OPERAND_REGEXP + ")" +
                                                             "\\s*(" + OPERATION_REGEXP + ")\\s*" +
-                                                            "(" + OPERAND_REGEXP + ")\\s*\\)\\s*";
+                                                            "(" + OPERAND_REGEXP + ")\\s*\\)";
 
     private static final Pattern EXPRESSION_PATTERN = Pattern.compile(
-            NUMBER_REGEXP + "|" + ELEMENT_REGEXP + "|" + BINARY_OPERATION_REGEXP
+            "\\s*(" + NUMBER_REGEXP + ")\\s*|\\s*(" + ELEMENT_REGEXP + ")\\s*|\\s*" + BINARY_OPERATION_REGEXP + "\\s*"
     );
 
     @Override

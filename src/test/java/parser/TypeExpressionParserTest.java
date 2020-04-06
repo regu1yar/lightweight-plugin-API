@@ -121,4 +121,14 @@ public class TypeExpressionParserTest {
         assertTrue(expression instanceof ArithmeticalExpression);
         assertEquals(representation, expression.getRepresentation());
     }
+
+    @Test
+    public void parseNestedParentheses() throws TypeError, SyntaxError {
+        String representation = "(((element + 10) - 100) > -1)";
+
+        Expression expression = expressionParser.parse(representation);
+
+        assertTrue(expression instanceof LogicalExpression);
+        assertEquals(representation, expression.getRepresentation());
+    }
 }
