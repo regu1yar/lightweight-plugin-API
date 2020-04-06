@@ -124,7 +124,7 @@ public class TypeExpressionParserTest {
 
     @Test
     public void parseNestedParentheses() throws TypeError, SyntaxError {
-        String representation = "(((element + 10) - 100) > -1)";
+        String representation = "(((element + 10) - (element * 100)) > (-1 + element))";
 
         Expression expression = expressionParser.parse(representation);
 
