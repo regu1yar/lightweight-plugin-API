@@ -49,78 +49,90 @@ public class TypeExpressionParser implements ExpressionParser {
 
         switch (parts.size()) {
             case 1:
-                Pattern withoutParenthesesExpression = Pattern.compile(
-                        "\\(\\s*(" + SIMPLE_OPERAND_REGEXP + ")\\s*" +
-                                "\\s*(" + OPERATION_REGEXP + ")\\s*" +
-                                "\\s*(" + SIMPLE_OPERAND_REGEXP + ")\\s*\\)"
-                );
-                Matcher withoutParenthesesMatcher = withoutParenthesesExpression.matcher(representation);
-                if (!withoutParenthesesMatcher.matches()) {
-                    throw new SyntaxError("Unable to parse expression: " + representation);
-                } else {
-                    return SYMBOLS_TO_OPERATIONS.get(withoutParenthesesMatcher.group(2)).applyTo(
-                            parse(withoutParenthesesMatcher.group(1)),
-                            parse(withoutParenthesesMatcher.group(3))
-                    );
-                }
+                return parseExpressionWithoutParentheses(representation, parts);
             case 2:
-                if (parts.get(0).endsWith(")")) {
-                    Pattern parenthesesOperandPattern = Pattern.compile("\\s*(" + PARENTHESES_OPERAND_REGEXP + ")\\s*");
-                    Pattern operationWithOperandPattern = Pattern.compile(
-                            "\\s*(" + OPERATION_REGEXP + ")\\s*" +
-                                    "\\s*(" + SIMPLE_OPERAND_REGEXP + ")\\s*"
-                    );
-
-                    Matcher parenthesesOperandMatcher = parenthesesOperandPattern.matcher(parts.get(0));
-                    Matcher operationWithOperandMatcher = operationWithOperandPattern.matcher(parts.get(1));
-
-                    if (!parenthesesOperandMatcher.matches() || !operationWithOperandMatcher.matches()) {
-                        throw new SyntaxError("Unable to parse expression: " + representation);
-                    } else {
-                        return SYMBOLS_TO_OPERATIONS.get(operationWithOperandMatcher.group(1)).applyTo(
-                                parse(parenthesesOperandMatcher.group(1)),
-                                parse(operationWithOperandMatcher.group(2))
-                        );
-                    }
-                } else {
-                    Pattern parenthesesOperandPattern = Pattern.compile("\\s*(" + PARENTHESES_OPERAND_REGEXP + ")\\s*");
-                    Pattern operandWithOperationPattern = Pattern.compile(
-                            "\\s*(" + SIMPLE_OPERAND_REGEXP + ")\\s*" +
-                                    "\\s*(" + OPERATION_REGEXP + ")\\s*"
-                    );
-
-                    Matcher operandWithOperationMatcher = operandWithOperationPattern.matcher(parts.get(0));
-                    Matcher parenthesesOperandMatcher = parenthesesOperandPattern.matcher(parts.get(1));
-
-                    if (!operandWithOperationMatcher.matches() || !parenthesesOperandMatcher.matches() ) {
-                        throw new SyntaxError("Unable to parse expression: " + representation);
-                    } else {
-                        return SYMBOLS_TO_OPERATIONS.get(operandWithOperationMatcher.group(2)).applyTo(
-                                parse(operandWithOperationMatcher.group(1)),
-                                parse(parenthesesOperandMatcher.group(1))
-                        );
-                    }
-                }
+                return parseExpressionWithOneParentheses(representation, parts);
             case 3:
-                Pattern parenthesesOperandPattern = Pattern.compile("\\s*(" + PARENTHESES_OPERAND_REGEXP + ")\\s*");
-                Pattern operationPattern = Pattern.compile("\\s*(" + OPERATION_REGEXP + ")\\s*");
-
-                Matcher firstOperandMatcher = parenthesesOperandPattern.matcher(parts.get(0));
-                Matcher operationMatcher = operationPattern.matcher(parts.get(1));
-                Matcher secondOperandMatcher = parenthesesOperandPattern.matcher(parts.get(2));
-
-                if (!firstOperandMatcher.matches() ||
-                        !operationMatcher.matches() ||
-                        !secondOperandMatcher.matches()) {
-                    throw new SyntaxError("Unable to parse expression: " + representation);
-                } else {
-                    return SYMBOLS_TO_OPERATIONS.get(operationMatcher.group(1)).applyTo(
-                            parse(firstOperandMatcher.group(1)),
-                            parse(secondOperandMatcher.group(1))
-                    );
-                }
+                return parseExpressionWithTwoParenthesises(representation, parts);
             default:
                 throw new SyntaxError("Unreachable part of parsing");
+        }
+    }
+
+    private Expression parseExpressionWithTwoParenthesises(String representation, ArrayList<String> parts) throws SyntaxError, TypeError {
+        Pattern parenthesesOperandPattern = Pattern.compile("\\s*(" + PARENTHESES_OPERAND_REGEXP + ")\\s*");
+        Pattern operationPattern = Pattern.compile("\\s*(" + OPERATION_REGEXP + ")\\s*");
+
+        Matcher firstOperandMatcher = parenthesesOperandPattern.matcher(parts.get(0));
+        Matcher operationMatcher = operationPattern.matcher(parts.get(1));
+        Matcher secondOperandMatcher = parenthesesOperandPattern.matcher(parts.get(2));
+
+        if (!firstOperandMatcher.matches() ||
+                !operationMatcher.matches() ||
+                !secondOperandMatcher.matches()) {
+            throw new SyntaxError("Unable to parse expression: " + representation);
+        } else {
+            return SYMBOLS_TO_OPERATIONS.get(operationMatcher.group(1)).applyTo(
+                    parse(firstOperandMatcher.group(1)),
+                    parse(secondOperandMatcher.group(1))
+            );
+        }
+    }
+
+    private Expression parseExpressionWithOneParentheses(String representation, ArrayList<String> parts) throws SyntaxError, TypeError {
+        if (parts.get(0).endsWith(")")) {
+            Pattern parenthesesOperandPattern = Pattern.compile("\\s*(" + PARENTHESES_OPERAND_REGEXP + ")\\s*");
+            Pattern operationWithOperandPattern = Pattern.compile(
+                    "\\s*(" + OPERATION_REGEXP + ")\\s*" +
+                            "\\s*(" + SIMPLE_OPERAND_REGEXP + ")\\s*"
+            );
+
+            Matcher parenthesesOperandMatcher = parenthesesOperandPattern.matcher(parts.get(0));
+            Matcher operationWithOperandMatcher = operationWithOperandPattern.matcher(parts.get(1));
+
+            if (!parenthesesOperandMatcher.matches() || !operationWithOperandMatcher.matches()) {
+                throw new SyntaxError("Unable to parse expression: " + representation);
+            } else {
+                return SYMBOLS_TO_OPERATIONS.get(operationWithOperandMatcher.group(1)).applyTo(
+                        parse(parenthesesOperandMatcher.group(1)),
+                        parse(operationWithOperandMatcher.group(2))
+                );
+            }
+        } else {
+            Pattern parenthesesOperandPattern = Pattern.compile("\\s*(" + PARENTHESES_OPERAND_REGEXP + ")\\s*");
+            Pattern operandWithOperationPattern = Pattern.compile(
+                    "\\s*(" + SIMPLE_OPERAND_REGEXP + ")\\s*" +
+                            "\\s*(" + OPERATION_REGEXP + ")\\s*"
+            );
+
+            Matcher operandWithOperationMatcher = operandWithOperationPattern.matcher(parts.get(0));
+            Matcher parenthesesOperandMatcher = parenthesesOperandPattern.matcher(parts.get(1));
+
+            if (!operandWithOperationMatcher.matches() || !parenthesesOperandMatcher.matches() ) {
+                throw new SyntaxError("Unable to parse expression: " + representation);
+            } else {
+                return SYMBOLS_TO_OPERATIONS.get(operandWithOperationMatcher.group(2)).applyTo(
+                        parse(operandWithOperationMatcher.group(1)),
+                        parse(parenthesesOperandMatcher.group(1))
+                );
+            }
+        }
+    }
+
+    private Expression parseExpressionWithoutParentheses(String representation, ArrayList<String> parts) throws SyntaxError, TypeError {
+        Pattern withoutParenthesesExpression = Pattern.compile(
+                "\\(\\s*(" + SIMPLE_OPERAND_REGEXP + ")\\s*" +
+                        "\\s*(" + OPERATION_REGEXP + ")\\s*" +
+                        "\\s*(" + SIMPLE_OPERAND_REGEXP + ")\\s*\\)"
+        );
+        Matcher withoutParenthesesMatcher = withoutParenthesesExpression.matcher(parts.get(0));
+        if (!withoutParenthesesMatcher.matches()) {
+            throw new SyntaxError("Unable to parse expression: " + representation);
+        } else {
+            return SYMBOLS_TO_OPERATIONS.get(withoutParenthesesMatcher.group(2)).applyTo(
+                    parse(withoutParenthesesMatcher.group(1)),
+                    parse(withoutParenthesesMatcher.group(3))
+            );
         }
     }
 
