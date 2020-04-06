@@ -131,4 +131,28 @@ public class TypeExpressionParserTest {
         assertTrue(expression instanceof LogicalExpression);
         assertEquals(representation, expression.getRepresentation());
     }
+
+    @Test
+    public void parseComplicatedParentheses() throws TypeError, SyntaxError {
+        String representation = "(((-5 < 0) & ((8 + 10) > 3)) | ((0 = 1) | (3 < 5)))";
+
+        Expression expression = expressionParser.parse(representation);
+
+        assertTrue(expression instanceof LogicalExpression);
+        assertEquals(representation, expression.getRepresentation());
+    }
+
+    @Test(expected = SyntaxError.class)
+    public void throwsSyntaxErrorWhenEmptyParentheses() throws TypeError, SyntaxError {
+        String representation = "()";
+
+        Expression expression = expressionParser.parse(representation);
+    }
+
+    @Test(expected = TypeError.class)
+    public void throwsTypeErrorWhenWrongOperandType() throws TypeError, SyntaxError {
+        String representation = "((0 > 1) + 10)";
+
+        Expression expression = expressionParser.parse(representation);
+    }
 }
